@@ -35,3 +35,4 @@ IADM_ECHOCOLOR_ERROR_HINT = Color(255, 255, 0)
 
 IADM_TEST_MODE = true
 
+IADM_SFS = include("thirdparty/sfs.lua")

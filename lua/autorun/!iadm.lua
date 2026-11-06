@@ -3,6 +3,7 @@ if not (PRE_HOOK and PRE_HOOK_RETURN and HOOK_MONITOR_LOW and HOOK_LOW and HOOK_
     return
 end
 
+AddCSLuaFile("iadm/thirdparty/sfs.lua")
 
 AddCSLuaFile("iadm/globals.lua")
 include("iadm/globals.lua")
