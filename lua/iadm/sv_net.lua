@@ -10,7 +10,7 @@ util.AddNetworkString("iadm_syncdata")
 net.Receive("iadm_command", function(len, pl)
     if !pl:IsValid() then return end
     local cmd = net.ReadString()
-    local args = net.ReadTable()
+    local args = IADM_NET_READTABLE()
 	
 	local ctbl = IADM.Commands[cmd]
 	if !ctbl then return end
@@ -34,7 +34,7 @@ net.Receive("iadm_playereditconfig", function(len, pl)
     if !pl:IsValid() then return end
     local cfg = net.ReadString()
     local option = net.ReadString()
-    local args = net.ReadTable()
+    local args = IADM_NET_READTABLE()
 
     local ctbl = IADM:GetConfigCategoryTable(cfg)
     if !ctbl then return end

@@ -176,7 +176,7 @@ function IADM:Message(ply, tochat, ...)
             net.Start("iadm_printmsg")
             net.WriteBit(0)
             net.WriteBit(tochat and 1 or 0)
-            net.WriteTable(tbl)
+            IADM_NET_WRITETABLE(tbl)
             net.Send(ply)
 
 
@@ -212,7 +212,7 @@ function IADM:MessageWPrefix(ply, tochat, ...)
             net.Start("iadm_printmsg")
             net.WriteBit(1)
             net.WriteBit(tochat and 1 or 0)
-            net.WriteTable(tbl)
+            IADM_NET_WRITETABLE(tbl)
             net.Send(ply)
 
 			local _,plys = player.Iterator()
@@ -552,7 +552,7 @@ function IADM:CanUseCommand(pl, cmd)
     local ctbl = IADM.Commands[cmd]
     if not ctbl then return false end
 
-    local ugrp = IADM.UserGroups[pl:GetUserGroup()]
+    local ugrp = IADM.UserGroups[pl:IADMGetUserGroup()]
 
     if ugrp.powerlevel and (ctbl.PowerLevelReq or 0) <= ugrp.powerlevel then
         return true
@@ -656,7 +656,7 @@ concommand.Add("iadm", function(pl, cmd, args, str)
     if CLIENT then
         net.Start("iadm_command")
         net.WriteString(cmd)
-        net.WriteTable(args)
+        IADM_NET_WRITETABLE(args)
         net.SendToServer()
 
     elseif SERVER then
@@ -829,7 +829,7 @@ concommand.Add("iadm_config", function(pl, cmd, args, str)
         net.Start("iadm_playereditconfig")
         net.WriteString(cfg)
         net.WriteString(option)
-        net.WriteTable(args)
+        IADM_NET_WRITETABLE(args)
         net.SendToServer()
     elseif SERVER then
         local ctbl = IADM:GetConfigCategoryTable(cfg)

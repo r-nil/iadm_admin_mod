@@ -48,7 +48,7 @@ return function(MODULE)
         IADM.UserGroups[name] = nil
         for _,ply in ipairs(player.GetAll()) do
             if !ply:IsUserGroup(name) then continue end
-            ply:SetUserGroup("user")
+            ply:IADMSetUserGroup("user")
         end
 
         local db = IADM.DatabaseDir.."_groups"
@@ -112,7 +112,7 @@ return function(MODULE)
 
         local db = IADM.DatabaseDir.."_users"
         if IsValid(ply) then
-            ply:SetUserGroup(group)
+            ply:IADMSetUserGroup(group)
         else
             local dbply = sql.QueryTyped("SELECT * FROM "..db.." WHERE id64=?", id64)[1]
             if !dbply then return false, "This player does not exist!" end
@@ -197,7 +197,7 @@ return function(MODULE)
 
         net.Start("iadm_syncdata")
         net.WriteString(id)
-        net.WriteTable(usergroups)
+        IADM_NET_WRITETABLE(usergroups)
         net.Send(plys)
     end
 

@@ -10,7 +10,7 @@ local cmd = IADM:AddCommand("teleport", function(caller, target)
 			IADM:LogCommandUse(caller, "#A teleported #T", false, target)
         end
     else
-        IADM:MessageWPrefix(allplys(), true, IADM_ECHOCOLOR_ERROR, Format("%s dead!", caller == target and "You are" or target:Nick().." is"))
+        IADM:MessageWPrefix(caller, true, IADM_ECHOCOLOR_ERROR, Format("%s dead!", caller == target and "You are" or target:Nick().." is"))
     end
 end)
 cmd.Name = "Teleport"

@@ -1,7 +1,7 @@
 net.Receive("iadm_printmsg", function(len)
     local prefix = net.ReadBit() == 1
     local printtochat = net.ReadBit() == 1
-    local tbl = net.ReadTable()
+    local tbl = IADM_NET_READTABLE()
 
 	for i,str in ipairs(tbl) do
 		if !isbool(str) and !isnumber(str) and
@@ -33,7 +33,7 @@ end)
 net.Receive("iadm_playerusecmd", function(len)
     local ply = net.ReadEntity()
     local str = net.ReadString()
-    local tbl = net.ReadTable()
+    local tbl = IADM_NET_READTABLE()
 
     str = string.Replace(str, "#A#", ply:Nick())
     -- str = string.Replace(str, "#T#", ply:Nick())
@@ -43,7 +43,7 @@ net.Receive("iadm_playerusecmd", function(len)
 end)
 
 net.Receive("iadm_csay", function()
-    local tbl = net.ReadTable()
+    local tbl = IADM_NET_READTABLE()
     local start = SysTime()
 
     local t = {}
@@ -115,7 +115,7 @@ end)
 net.Receive("iadm_syncdata", function(len)
     local pl = LocalPlayer()
     local datatype = net.ReadString()
-    local args = net.ReadTable()
+    local args = IADM_NET_READTABLE()
 
     for _,tbl in ipairs(IADM.RegisteredSyncData) do
         if tbl.id == datatype then

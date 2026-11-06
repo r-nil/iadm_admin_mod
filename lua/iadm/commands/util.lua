@@ -98,7 +98,7 @@ local cmd = IADM:AddCommand("csay", function(caller, text)
     -- local tbl = string.Explode("%#", text)
 
     net.Start("iadm_csay")
-    net.WriteTable({text})
+    IADM_NET_WRITETABLE({text})
     net.Broadcast()
 end)
 cmd.Name = "Csay"

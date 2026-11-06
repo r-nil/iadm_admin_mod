@@ -30,12 +30,12 @@ return MODULE, function(MODULE)
     if not player then return end
 
     function player:IsAdmin()
-        local usergroup = IADM.UserGroups[self:GetUserGroup()]
+        local usergroup = IADM.UserGroups[self:IADMGetUserGroup()]
         return usergroup and (usergroup.isadmin or self:IsSuperAdmin())
     end
 
     function player:IsSuperAdmin()
-        local usergroup = IADM.UserGroups[self:GetUserGroup()]
+        local usergroup = IADM.UserGroups[self:IADMGetUserGroup()]
         return usergroup and usergroup.issuperadmin
     end
 end

@@ -27,7 +27,7 @@ IADM:AddHook("PlayerInitialSpawn", "PlayerInit", function(ply)
         sql.QueryTyped("INSERT INTO "..IADM.DatabaseDir.."_users(id64, name, groupname, firsttime, playtime, lastseen) VALUES(?, ?, ?, ?, ?, ?)",
             id64,
             ply:Name(),
-            ply:IsListenServerHost() and "superadmin" or ply:GetUserGroup(),
+            ply:IsListenServerHost() and "superadmin" or ply:IADMGetUserGroup(),
             os.time(),
             0,
             os.time()
@@ -40,7 +40,7 @@ IADM:AddHook("PlayerInitialSpawn", "PlayerInit", function(ply)
 end, PRE_HOOK)
 
 IADM:AddHook("PlayerInitialSpawn", "PlayerPostInit", function(_, ply)
-	ply:SetUserGroup(ply.IADM_usergroup)
+	ply:IADMSetUserGroup(ply.IADM_usergroup)
 	ply.IADM_usergroup = nil
 end, POST_HOOK)
 
