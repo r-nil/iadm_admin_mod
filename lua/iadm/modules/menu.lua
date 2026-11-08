@@ -356,6 +356,7 @@ return MODULE, function(MODULE)
         frame:SetMinWidth(640)
         frame:SetMinHeight(400)
         frame:MakePopup()
+        frame:SetKeyboardInputEnabled(false)
         frame.OnRemove = function()
             frame = nil
             searchEntry = nil
