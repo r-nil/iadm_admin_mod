@@ -22,6 +22,7 @@ net.Receive("iadm_command", function(len, pl)
     end
 
     args = IADM:ProcessCmdArgs(pl, inchat, ctbl, args)
+    if not args then return end
 
     if ctbl.ChatArg then
 	    ctbl.Func(pl, false, unpack(args))

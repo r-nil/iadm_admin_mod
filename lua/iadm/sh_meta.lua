@@ -18,6 +18,15 @@ local meta_ply = FindMetaTable("Player")
 if meta_ply then
     function meta_ply:IADMMessage(chat, ...)
         net.Start("iadm_printmsg")
+        net.WriteBit(true)
+        net.WriteBit(tobool(chat))
+        IADM_NET_WRITETABLE({...})
+        net.Send(self)
+    end
+
+    function meta_ply:IADMMessageNoPrefix(chat, ...)
+        net.Start("iadm_printmsg")
+        net.WriteBit(false)
         net.WriteBit(tobool(chat))
         IADM_NET_WRITETABLE({...})
         net.Send(self)

@@ -12,6 +12,7 @@ The commands are one of the key elements to this admin mod. These allow users, e
 
 ### CORE
 - iadm help [command] - Shows instructions for the specified command.
+- iadm menu - Opens the in-game IADM menu, where available commands can be browsed and run. The `iadm_menu` console command can be used for key binds (e.g. `bind p iadm_menu`).
 - iadm status - Displays server information (Uptime, players, current map and gamemode)
 - iadm version - Displays message with admin mod version.
 

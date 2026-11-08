@@ -30,6 +30,7 @@ Use at your own risk.
 - Groups: Manage Usergroups with specified powerlevel.
 - HookUtils: Enable specific hook overrides. (WIP)
 - Logging: Log every player action in a log file. (Warning: Some logging options may be resource-intensive) (WIP)
+- Menu: Browse and run available commands from an in-game menu. (WIP)
 - ~~MOTD: Display a welcome message upon loading in successfully.~~ (NYI)
 - ~~Teams: Sandbox teams like in ULX, but better!~~ (NYI)
 
@@ -51,7 +52,7 @@ To target a player under your crosshair, use @ (works on entities as well!)
 ULX felt too outdated, despite it being powerful, lacked any versatile customization options. SAM, while being a simple mod, is a paid mod. Other alternatives like xAdmin lacked extensibility and FAdmin being DarkRP focused only. IADM on the other hand, will remain highly customizable and extensible with the help of toggleable modules, addons, etc.
 
 ### There is no UI for the mod yet. When will UI update be coming?
-I have no plans for making UI yet. For now, stick to using console commands and chat commands.
+A basic in-game menu is now available with `iadm menu` (or `!menu` in chat). It lets you browse and run the commands you have permission to use. More panels and controls will be added over time.
 
 ### Why did you choose Srlion's Hook Library as a dependency?
 It's super fast and versatile. Oh, and it's faster than ULib, too.

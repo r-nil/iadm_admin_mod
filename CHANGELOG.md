@@ -1,5 +1,19 @@
 # Changelogs for IADM
 
+## Unreleased
++ Added Menu module with an in-game command browser.
++ Added the `menu` command to open the menu (`!menu`, `iadm menu`, or bind `iadm_menu` to a key).
++ Menu player arguments now use a player selector. Multi-target commands allow selecting several players at once.
++ Multi-target player arguments now accept comma-separated names in chat/console as well (`!kill player1,player2`).
+
+* Fixed menu player selections returning empty values.
+* Fixed multi-target commands receiving a string instead of a table of players.
+* Fixed a server error when an argument failed to resolve (invalid target, etc.).
+* Fixed `GetTranslatedText` erroring when called from the client or console.
+
+/ Updated documentation for the new menu.
+
+
 ## v0.4.1 (#29)
 + Added 1 new global for color
 

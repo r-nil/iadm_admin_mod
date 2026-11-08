@@ -50,36 +50,27 @@ end
 
 function IADM:GetTranslatedText(pl, id, ...)
     local lang
-    local tbl
+    local args = {...}
 
-    if SERVER and pl and IsValid(pl) then
+    -- Also allow calling this without a player argument: IADM:GetTranslatedText("text")
+    if type(pl) == "string" and id == nil then
+        id = pl
+        pl = nil
+    end
+
+    if SERVER and IsValid(pl) then
         lang = langs[pl.IADM_CurrentLanguage] or langs[self.CurrentLanguage] or langs[self.DefaultLanguage]
     else
         lang = langs[self.CurrentLanguage] or langs[self.DefaultLanguage]
-
-        if id then
-            if ... == nil then
-                tbl = {id}
-            else
-                tbl = {id, ...}
-            end
-        end
-
-        id = pl
     end
 
-    if !lang or !lang[id] then
-        if tbl then
-            return string.format(id, unpack(tbl))
-        else
-            return id
-        end
+    local text = (lang and lang[id]) or id
+    if type(text) ~= "string" then return "" end
+
+    if #args > 0 then
+        local ok, formatted = pcall(string.format, text, unpack(args))
+        return ok and formatted or text
     end
 
-    if tbl then
-        return string.format(lang[id], unpack(tbl))
-    else
-        return lang[id]
-    end
-
+    return text
 end

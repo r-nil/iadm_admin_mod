@@ -332,6 +332,8 @@ function IADM:ProcessCmdArgs(pl, inchat, ctbl, args)
         end
         local a = args[count]
 
+        if not a then continue end
+
         if carg.type == IADM_ARGTYPE_PLR then
             if a == "^" then
                 a = pl
@@ -376,7 +378,79 @@ function IADM:ProcessCmdArgs(pl, inchat, ctbl, args)
             end
 
             args[count] = a
-        elseif carg.type == IADM_ARGTYPE_ENTS or carg.type == IADM_ARGTYPE_PLRS then
+        elseif carg.type == IADM_ARGTYPE_PLRS then
+            local tbl = {}
+            local seen = {}
+            local failed
+
+            -- Multiple targets can be comma separated. This is mainly used by the menu,
+            -- but also makes commands like "!kill player1,player2" work in chat.
+            for _, token in ipairs(string.Explode(",", tostring(a))) do
+                token = string.Trim(token)
+
+                if token ~= "" then
+                    local found = {}
+
+                    if token == "^" then
+                        found = {pl}
+                    elseif token == "@" then
+                        local ent = IsValid(pl) and pl:GetEyeTrace().Entity
+                        if IsValid(ent) and ent:IsPlayer() then
+                            found = {ent}
+                        end
+                    elseif isnumber(tonumber(token)) and IsValid(Entity(tonumber(token))) and Entity(tonumber(token)):IsPlayer() then
+                        found = {Entity(tonumber(token))}
+                    else
+                        for _, ply in ipairs(player.GetAll()) do
+                            if ply:Nick() == token then
+                                found = {ply}
+                                break
+                            end
+                        end
+
+                        if #found == 0 then
+                            for _, ply in ipairs(player.GetAll()) do
+                                if string.find(string_lower(ply:Nick()), string_lower(token), 1, true) then
+                                    table.insert(found, ply)
+                                end
+                            end
+                        end
+                    end
+
+                    if #found == 0 then
+                        failed = token
+                        break
+                    end
+
+                    for _, ply in ipairs(found) do
+                        if not seen[ply] then
+                            seen[ply] = true
+                            table.insert(tbl, ply)
+                        end
+                    end
+                end
+            end
+
+            if failed then
+                IADM:Message(pl, inchat, IADM_ECHOCOLOR_ERROR, "Arg #", IADM_ECHOCOLOR_ERROR_ARGVAR, count, IADM_ECHOCOLOR_ERROR, " error: ", IADM_ECHOCOLOR_ERROR_REASON, "Player not found: ", IADM_ECHOCOLOR_ERROR_ARGVAR, failed)
+                return
+            end
+
+            if #tbl == 0 then
+                IADM:Message(pl, inchat, IADM_ECHOCOLOR_ERROR, "Arg #", IADM_ECHOCOLOR_ERROR_ARGVAR, count, IADM_ECHOCOLOR_ERROR, " error: ", IADM_ECHOCOLOR_ERROR_REASON, "Player not found!")
+                return
+            end
+
+            for _, ply in ipairs(tbl) do
+                if not IADM:CmdCanTarget(pl, ply, ctbl, carg) then
+                    IADM:Message(pl, inchat, IADM_ECHOCOLOR_ERROR, "Arg #", IADM_ECHOCOLOR_ERROR_ARGVAR, count, IADM_ECHOCOLOR_ERROR, " error: ", IADM_ECHOCOLOR_ERROR_ARGVAR, ply:Nick(), IADM_ECHOCOLOR_ERROR, " cannot be targetted!")
+                    return
+                end
+            end
+
+            a = tbl
+            args[count] = a
+        elseif carg.type == IADM_ARGTYPE_ENTS then
             if a == "^" then
                 a = {pl}
             elseif a == "@" then
@@ -385,23 +459,15 @@ function IADM:ProcessCmdArgs(pl, inchat, ctbl, args)
                 a = {Entity(a)}
             else
                 local tbl = {}
-                if carg.type == IADM_ARGTYPE_ENTS then
-                    if string.sub(a, 1, 1) == "#" then
-                        for _,ent in ipairs(ents.FindByName(string.sub(a, 2))) do
-                            if ent:IsPlayer() then continue end
-                            table.insert(tbl, ent)
-                        end
-                    else
-                        for _,ent in ipairs(ents.FindByClass(a)) do
-                            if ent:IsPlayer() then continue end
-                            table.insert(tbl, ent)
-                        end
+                if string.sub(a, 1, 1) == "#" then
+                    for _,ent in ipairs(ents.FindByName(string.sub(a, 2))) do
+                        if ent:IsPlayer() then continue end
+                        table.insert(tbl, ent)
                     end
                 else
-                    for _,ply in ipairs(player.GetAll()) do
-                        if string.find(string_lower(ply:Nick()), string_lower(v)) and IADM:CmdCanTarget(pl, ply, ctbl, carg) then
-                            table.insert(tbl, ply)
-                        end
+                    for _,ent in ipairs(ents.FindByClass(a)) do
+                        if ent:IsPlayer() then continue end
+                        table.insert(tbl, ent)
                     end
                 end
 
@@ -566,8 +632,7 @@ function IADM:CanUseCommand(pl, cmd)
     return false
 end
 
-
-concommand.Add("iadm", function(pl, cmd, args, str)
+local IADM_CMD = function(pl, cmd, args, str)
     local prefix = "[IADM] "
     if #args == 0 then
         local c = 0
@@ -594,7 +659,7 @@ concommand.Add("iadm", function(pl, cmd, args, str)
     if !ctbl then
         for k,_ in SortedPairs(IADM.Commands) do
             if string.sub(k, 1, #cmd) ~= cmd then continue end
-            if !IADM:CanUseCommand(pl) then continue end
+            if !IADM:CanUseCommand(pl, k) then continue end
             IADM:MessageWPrefix(pl, false, IADM_ECHOCOLOR_TEXT, IADM:GetTranslatedText(pl, "Invalid command "), IADM_ECHOCOLOR_ARG1, cmd, IADM_ECHOCOLOR_TEXT, IADM:GetTranslatedText(pl, ". Maybe you meant: "), IADM_ECHOCOLOR_ARG1, k, IADM_ECHOCOLOR_TEXT, IADM:GetTranslatedText(pl, "?"))
             return
         end
@@ -676,7 +741,9 @@ concommand.Add("iadm", function(pl, cmd, args, str)
             ctbl.Func(pl, unpack(args))
         end
     end
-end, function(cmd, argstr, args)
+end
+
+local IADM_AUTOCOMPLETE = function(cmd, argstr, args)
     local pl = CLIENT and LocalPlayer() or !game.IsDedicated() and player.GetAll()[1] or NULL
     local t = {}
     local arg1 = string_lower(args[1] or "")
@@ -763,7 +830,11 @@ end, function(cmd, argstr, args)
     end
 
     return t
-end, "nil", 0)
+end
+
+concommand.Add("iadm", IADM_CMD, IADM_AUTOCOMPLETE, "nil", 0)
+concommand.Add("ulx", IADM_CMD, IADM_AUTOCOMPLETE, "nil", 0)
+concommand.Add("sam", IADM_CMD, IADM_AUTOCOMPLETE, "nil", 0)
 
 concommand.Add("iadm_config", function(pl, cmd, args, str)
     local prefix = "[IADM] "

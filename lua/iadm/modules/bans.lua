@@ -106,11 +106,8 @@ return MODULE, function(MODULE)
         return true
     end
     
-    function IADM:RemoveBan(id64, reason, bannedby)
-        if IsValid(bannedby) then bannedby = bannedby:GetIADMSteamID64()
-        elseif type(bannedby) ~= "string" and bannedby ~= NULL then return false, "Invalid user banning the target!" end
-    
-        if !IADM:IsPlayerBanned(id64) then return false, "This player is not banned, or doesn't exist!" end
+    function IADM:RemoveBan(id64, reason)
+        if not MODULE.BannedPlayers[id64] then return false, "This player is not banned, or doesn't exist!" end
         local banned = sql.QueryTyped("SELECT * FROM iadm_users WHERE id64=? LIMIT 1", id64)
     	if banned then
     		banned = banned[1]
@@ -131,7 +128,8 @@ return MODULE, function(MODULE)
     function IADM:GetBanReason(id64, bypass)
         if !bypass and not IADM:IsPlayerBanned(id64) then return "null" end
         local bantbl = MODULE.BannedPlayers[id64]
-        local r = [[You are banned!
+        local r = [[oh no! you got reported by tj!!!!
+maybe don't be mean!!!
     
     Reason: %reason%
     Banned by: %bannedbyname% (%bannedbyid%)
@@ -220,7 +218,7 @@ return MODULE, function(MODULE)
     	elseif tbl then
     		IADM:MessageWPrefix(NULL, nil, IADM_ECHOCOLOR_TEXT, "Removing ban for ", IADM_ECHOCOLOR_ARG1, id64)
     		IADM:RemoveBan(id64, "Ban expired.", NULL)
-    		return false, "#GameUI_ConnectionFailed"
+    		--return false, "#GameUI_ConnectionFailed"
         end
     end)
     
